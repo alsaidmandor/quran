@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:quran/features/quran/presentation/cubit/quran_cubit.dart';
 import 'package:quran/features/quran/presentation/pages/build_list_of_surah_page.dart';
 
@@ -34,6 +33,7 @@ class _QuranScreenState extends State<QuranScreen>
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
+
     super.initState();
   }
 
@@ -74,8 +74,10 @@ class _QuranScreenState extends State<QuranScreen>
                       color: ColorsManager.white,
                       fontSize: 25,
                       fontWeight: FontWeight.w500),
-                ) ,
-                SizedBox(width: 5,),
+                ),
+                SizedBox(
+                  width: 5,
+                ),
                 Image(
                   image: AppImages.quranArText,
                   color: Colors.white,
@@ -113,7 +115,7 @@ class _QuranScreenState extends State<QuranScreen>
                   SpaceLine(height: 1),
                   Expanded(
                     child: TabBarView(controller: _tabController, children: [
-                       BuildListOfSurahScreen(),
+                      BuildListOfSurahScreen(),
                       SingleChildScrollView(
                           child: Container(
                         child: Center(child: const Text('Juz')),

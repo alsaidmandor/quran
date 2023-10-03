@@ -1,11 +1,16 @@
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'prayer.g.dart';
 
 @JsonSerializable()
+@HiveType(typeId: 7)
 class Prayer {
+  @HiveField(0)
   final int? code;
+  @HiveField(1)
   final String? status;
+  @HiveField(2)
   final List<Data>? data;
 
   const Prayer({
@@ -14,8 +19,7 @@ class Prayer {
     this.data,
   });
 
-  factory Prayer.fromJson(Map<String, dynamic> json) =>
-      _$PrayerFromJson(json);
+  factory Prayer.fromJson(Map<String, dynamic> json) => _$PrayerFromJson(json);
 
   Map<String, dynamic> toJson() => _$PrayerToJson(this);
 
@@ -33,9 +37,13 @@ class Prayer {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 8)
 class Data {
+  @HiveField(0)
   final Timings? timings;
+  @HiveField(1)
   final Date? date;
+  @HiveField(2)
   final Meta? meta;
 
   const Data({
@@ -44,8 +52,7 @@ class Data {
     this.meta,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) =>
-      _$DataFromJson(json);
+  factory Data.fromJson(Map<String, dynamic> json) => _$DataFromJson(json);
 
   Map<String, dynamic> toJson() => _$DataToJson(this);
 
@@ -63,14 +70,20 @@ class Data {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 8)
 class Timings {
+  @HiveField(0)
   final String? Fajr;
+  @HiveField(1)
   final String? Sunrise;
+  @HiveField(2)
   final String? Dhuhr;
+  @HiveField(3)
   final String? Asr;
+  @HiveField(4)
   final String? Maghrib;
+  @HiveField(5)
   final String? Isha;
-
 
   const Timings({
     this.Fajr,
@@ -79,7 +92,6 @@ class Timings {
     this.Asr,
     this.Maghrib,
     this.Isha,
-
   });
 
   factory Timings.fromJson(Map<String, dynamic> json) =>
@@ -94,7 +106,6 @@ class Timings {
     String? Asr,
     String? Maghrib,
     String? Isha,
-
   }) {
     return Timings(
       Fajr: Fajr ?? this.Fajr,
@@ -108,10 +119,15 @@ class Timings {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 9)
 class Date {
+  @HiveField(0)
   final String? readable;
+  @HiveField(1)
   final String? timestamp;
+  @HiveField(2)
   final Gregorian? gregorian;
+  @HiveField(3)
   final Hijri? hijri;
 
   const Date({
@@ -121,8 +137,7 @@ class Date {
     this.hijri,
   });
 
-  factory Date.fromJson(Map<String, dynamic> json) =>
-      _$DateFromJson(json);
+  factory Date.fromJson(Map<String, dynamic> json) => _$DateFromJson(json);
 
   Map<String, dynamic> toJson() => _$DateToJson(this);
 
@@ -142,13 +157,21 @@ class Date {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 10)
 class Gregorian {
+  @HiveField(0)
   final String? date;
+  @HiveField(1)
   final String? format;
+  @HiveField(2)
   final String? day;
+  @HiveField(3)
   final Weekday? weekday;
+  @HiveField(4)
   final Month? month;
+  @HiveField(5)
   final String? year;
+  @HiveField(6)
   final Designation? designation;
 
   const Gregorian({
@@ -188,8 +211,11 @@ class Gregorian {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 11)
 class Weekday {
+  @HiveField(0)
   final String? en;
+  @HiveField(1)
   final String? ar;
 
   const Weekday({
@@ -214,9 +240,13 @@ class Weekday {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 12)
 class Month {
+  @HiveField(0)
   final int? number;
+  @HiveField(1)
   final String? en;
+  @HiveField(2)
   final String? ar;
 
   const Month({
@@ -225,8 +255,7 @@ class Month {
     this.ar,
   });
 
-  factory Month.fromJson(Map<String, dynamic> json) =>
-      _$MonthFromJson(json);
+  factory Month.fromJson(Map<String, dynamic> json) => _$MonthFromJson(json);
 
   Map<String, dynamic> toJson() => _$MonthToJson(this);
 
@@ -244,8 +273,11 @@ class Month {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 13)
 class Designation {
+  @HiveField(0)
   final String? abbreviated;
+  @HiveField(1)
   final String? expanded;
 
   const Designation({
@@ -270,14 +302,23 @@ class Designation {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 14)
 class Hijri {
+  @HiveField(0)
   final String? date;
+  @HiveField(1)
   final String? format;
+  @HiveField(2)
   final String? day;
+  @HiveField(3)
   final Weekday? weekday;
+  @HiveField(4)
   final Month? month;
+  @HiveField(5)
   final String? year;
+  @HiveField(6)
   final Designation? designation;
+  @HiveField(7)
   final List<dynamic>? holidays;
 
   const Hijri({
@@ -291,8 +332,7 @@ class Hijri {
     this.holidays,
   });
 
-  factory Hijri.fromJson(Map<String, dynamic> json) =>
-      _$HijriFromJson(json);
+  factory Hijri.fromJson(Map<String, dynamic> json) => _$HijriFromJson(json);
 
   Map<String, dynamic> toJson() => _$HijriToJson(this);
 
@@ -320,14 +360,23 @@ class Hijri {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 15)
 class Meta {
+  @HiveField(0)
   final double? latitude;
+  @HiveField(1)
   final double? longitude;
+  @HiveField(2)
   final String? timezone;
+  @HiveField(3)
   final Method? method;
+  @HiveField(4)
   final String? latitudeAdjustmentMethod;
+  @HiveField(5)
   final String? midnightMode;
+  @HiveField(6)
   final String? school;
+  @HiveField(7)
   final Offset? offset;
 
   const Meta({
@@ -341,8 +390,7 @@ class Meta {
     this.offset,
   });
 
-  factory Meta.fromJson(Map<String, dynamic> json) =>
-      _$MetaFromJson(json);
+  factory Meta.fromJson(Map<String, dynamic> json) => _$MetaFromJson(json);
 
   Map<String, dynamic> toJson() => _$MetaToJson(this);
 
@@ -361,7 +409,8 @@ class Meta {
       longitude: longitude ?? this.longitude,
       timezone: timezone ?? this.timezone,
       method: method ?? this.method,
-      latitudeAdjustmentMethod: latitudeAdjustmentMethod ?? this.latitudeAdjustmentMethod,
+      latitudeAdjustmentMethod:
+          latitudeAdjustmentMethod ?? this.latitudeAdjustmentMethod,
       midnightMode: midnightMode ?? this.midnightMode,
       school: school ?? this.school,
       offset: offset ?? this.offset,
@@ -370,10 +419,15 @@ class Meta {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 16)
 class Method {
+  @HiveField(0)
   final int? id;
+  @HiveField(1)
   final String? name;
+  @HiveField(2)
   final Params? params;
+  @HiveField(3)
   final Location? location;
 
   const Method({
@@ -383,8 +437,7 @@ class Method {
     this.location,
   });
 
-  factory Method.fromJson(Map<String, dynamic> json) =>
-      _$MethodFromJson(json);
+  factory Method.fromJson(Map<String, dynamic> json) => _$MethodFromJson(json);
 
   Map<String, dynamic> toJson() => _$MethodToJson(this);
 
@@ -404,8 +457,11 @@ class Method {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 17)
 class Params {
+  @HiveField(0)
   final double? Fajr;
+  @HiveField(1)
   final double? Isha;
 
   const Params({
@@ -413,8 +469,7 @@ class Params {
     this.Isha,
   });
 
-  factory Params.fromJson(Map<String, dynamic> json) =>
-      _$ParamsFromJson(json);
+  factory Params.fromJson(Map<String, dynamic> json) => _$ParamsFromJson(json);
 
   Map<String, dynamic> toJson() => _$ParamsToJson(this);
 
@@ -430,8 +485,11 @@ class Params {
 }
 
 @JsonSerializable()
+@HiveType(typeId: 18)
 class Location {
+  @HiveField(0)
   final double? latitude;
+  @HiveField(1)
   final double? longitude;
 
   const Location({
@@ -457,14 +515,23 @@ class Location {
 
 @JsonSerializable()
 class Offset {
+  @HiveField(0)
   final int? Imsak;
+  @HiveField(1)
   final int? Fajr;
+  @HiveField(2)
   final int? Sunrise;
+  @HiveField(3)
   final int? Dhuhr;
+  @HiveField(4)
   final int? Asr;
+  @HiveField(5)
   final int? Maghrib;
+  @HiveField(6)
   final int? Sunset;
+  @HiveField(7)
   final int? Isha;
+  @HiveField(8)
   final int? Midnight;
 
   const Offset({
@@ -479,8 +546,7 @@ class Offset {
     this.Midnight,
   });
 
-  factory Offset.fromJson(Map<String, dynamic> json) =>
-      _$OffsetFromJson(json);
+  factory Offset.fromJson(Map<String, dynamic> json) => _$OffsetFromJson(json);
 
   Map<String, dynamic> toJson() => _$OffsetToJson(this);
 

@@ -8,12 +8,11 @@ import '../cubit/home_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PrayerTimeList extends StatelessWidget {
-  PageController pageController ;
+  PageController pageController;
 
-   PrayerTimeList(    {super.key,
-     required this.pageController ,
-});
-
+  PrayerTimeList({super.key,
+    required this.pageController,
+  });
 
 
   @override
@@ -36,7 +35,9 @@ class PrayerTimeList extends StatelessWidget {
               },
               itemBuilder: (context, index) {
                 var entries =
-                    cubit.timings[index].toJson().entries;
+                    cubit.timings[index]
+                        .toJson()
+                        .entries;
                 return Column(
                   children:
                   entries.mapIndexed((indexInner, entry) {
@@ -54,102 +55,109 @@ class PrayerTimeList extends StatelessWidget {
                         text: key,
                         isSelected: false,
                         time: convertTo12HourFormat(value),
-                        index: indexInner, context: context);
+                        index: index,
+                        indexInner: indexInner,
+                        context: context);
                   }).toList(),
                 );
               }),
         );
       },
     );
-
-
   }
-   Widget itemPrayerTime(
-       {
-         required BuildContext context ,
-         required ImageProvider image,
-         required Color color,
-         required String text,
-         required bool isSelected,
-         required String time,
-         required int index}) {
-     return Padding(
-       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-       child: Container(
-         height: 60,
-         decoration: BoxDecoration(
-           border: Border.all(
-               color: index != HomeCubit.get(context).nextPrayerIndex
-                   ? Colors.transparent
-                   : ColorsManager.mainColor.withOpacity(0.2),
-               width: 1),
-           borderRadius: BorderRadius.circular(10),
-           color: index != HomeCubit.get(context).nextPrayerIndex
-               ? Colors.transparent
-               : ColorsManager.mainColor.withOpacity(0.2),
-         ),
-         child: Padding(
-           padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-           child: Row(
-             children: [
-               Image(
-                 image: image,
-                 color: color,
-                 width: 20,
-                 height: 20,
-               ),
-               const SizedBox(
-                 width: 10,
-               ),
-               Text(text),
-               const SizedBox(
-                 width: 10,
-               ),
-               const Icon(
-                 Icons.add_alert,
-                 color: ColorsManager.onBackgroundLight,
-               ),
-               const Spacer(),
-               Text(time),
-               // Checkbox(
-               //   value: false,
-               //   onChanged: (bool? value) {
-               //
-               //   },
-               // ),
 
-               SizedBox(
-                 width: 5,
-               ),
-               GestureDetector(
-                 onTap: () {
-                   HomeCubit.get(context).setSelectedCheckBox();
-                 },
-                 child: Container(
-                   width: 18,
-                   height: 18,
-                   decoration: BoxDecoration(
-                     shape: BoxShape.rectangle,
-                     border: Border.all(
-                       color: ColorsManager.mainColor,
-                       width: 1.0,
-                     ),
-                     borderRadius: BorderRadius.circular(5),
-                   ),
-                   child: HomeCubit.get(context).isSelectedCheckBox
-                       ? const Icon(
-                     Icons.check,
-                     size: 15,
-                     color: ColorsManager.mainColor,
-                   )
-                       : null,
-                 ),
-               ),
-             ],
-           ),
-         ),
-       ),
-     );
-   }
+  Widget itemPrayerTime({
+    required BuildContext context,
+    required ImageProvider image,
+    required Color color,
+    required String text,
+    required bool isSelected,
+    required String time,
+    required int index,
+    required int indexInner}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          border: Border.all(
+              color:  index == dt.day - 1
+                  ? indexInner == HomeCubit.get(context).nextPrayerIndex
+                  ? ColorsManager.mainColor.withOpacity(0.2)
+                  : Colors.transparent
+                  : Colors.transparent,
+              width: 1),
+          borderRadius: BorderRadius.circular(10),
+          color:  index == dt.day - 1
+              ? indexInner == HomeCubit.get(context).nextPrayerIndex
+              ? ColorsManager.mainColor.withOpacity(0.2)
+              : Colors.transparent
+              : Colors.transparent,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: Row(
+            children: [
+              Image(
+                image: image,
+                color: color,
+                width: 20,
+                height: 20,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(text),
+              const SizedBox(
+                width: 10,
+              ),
+              const Icon(
+                Icons.add_alert,
+                color: ColorsManager.onBackgroundLight,
+              ),
+              const Spacer(),
+              Text(time),
+              // Checkbox(
+              //   value: false,
+              //   onChanged: (bool? value) {
+              //
+              //   },
+              // ),
+
+              SizedBox(
+                width: 5,
+              ),
+              GestureDetector(
+                onTap: () {
+                  HomeCubit.get(context).setSelectedCheckBox();
+                },
+                child: Container(
+                  width: 18,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    border: Border.all(
+                      color: ColorsManager.mainColor,
+                      width: 1.0,
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: HomeCubit
+                      .get(context)
+                      .isSelectedCheckBox
+                      ? const Icon(
+                    Icons.check,
+                    size: 15,
+                    color: ColorsManager.mainColor,
+                  )
+                      : null,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
 }

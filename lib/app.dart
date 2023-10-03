@@ -9,10 +9,11 @@ import 'core/appCubit/app_cubit.dart';
 import 'core/network/dio_helper.dart';
 import 'core/network/network_info.dart';
 import 'core/uitls/app_strings.dart';
-import 'core/uitls/constants.dart';
+import 'features/home/data/data_sources/local/local_prayer_time_data_source.dart';
 import 'features/home/data/data_sources/remote/remote_prayer_time_data_source.dart';
 import 'features/home/domain/use_cases/get_prayer_time_use_case.dart';
 import 'features/home/presentation/cubit/home_cubit.dart';
+import 'features/quran/data/local/quran_local_data_source.dart';
 import 'features/quran/data/remote/quran_remote_data_source.dart';
 import 'features/quran/data/repositories/quran_repository_impl.dart';
 import 'features/quran/domain/use_cases/get_surah_list_user_case.dart';
@@ -30,16 +31,26 @@ class MyApp extends StatelessWidget {
           create: (context) => AppCubit(),
         ),
         BlocProvider<HomeCubit>(
-          create: (context) => HomeCubit(GetPrayerTimeUseCase(
-              PrayerTimeRepositoryImpl(
-                  networkInfo: NetworkInfoImpl(InternetConnectionChecker()),
-                  remotePrayerTime: RemotePrayerTimeDataSource())))..getLocation(context)..getTimePrayer()
-            ,
+          create: (context) => HomeCubit(
+              networkInfo: NetworkInfoImpl(InternetConnectionChecker()),
+              getPrayerTimeUseCase: GetPrayerTimeUseCase(
+                  PrayerTimeRepositoryImpl(
+                      networkInfo: NetworkInfoImpl(InternetConnectionChecker()),
+                      remotePrayerTime: RemotePrayerTimeDataSourceImpl(
+                          localPrayerTimeDataSource:
+                              LocalPrayerTimeDataSourceImpl()),
+                      localPrayerTimeDataSource:
+                          LocalPrayerTimeDataSourceImpl())))
+            ..getLocation(context)
+            ..getTimePrayer(),
         ),
         BlocProvider<QuranCubit>(
           create: (context) => QuranCubit(GetSurahListUserCase(
               QuranRepositoryImpl(
-                  remoteDataSource: QuranRemoteDataSourceImpl(DioService()),
+                  remoteDataSource: QuranRemoteDataSourceImpl(
+                      quranLocalDataSource: QuranLocalDataSourceImpl(),
+                      dioService: DioService()),
+                  quranLocalDataSource: QuranLocalDataSourceImpl(),
                   networkInfo: NetworkInfoImpl(InternetConnectionChecker()))))
             ..getSurahList(),
         ),

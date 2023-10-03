@@ -1,13 +1,9 @@
-import 'package:dartz/dartz_unsafe.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:quran/features/quran/data/model/ayat/ayat.dart';
-import 'package:quran/features/quran/presentation/pages/surah_page.dart';
 
 import '../../../../config/route/router.dart';
 import '../../../../core/color/colors.dart';
-import '../../../../core/notification/notification_service.dart';
 import '../../../../core/uitls/constants.dart';
 import '../cubit/quran_cubit.dart';
 
@@ -69,7 +65,7 @@ class BuildListOfSurahScreen extends StatelessWidget {
                           onTap: () async{
                              cubit.setSelectedItemColor(index);
                             Navigator.pushNamed(context, Routes.surah);
-                             NotificationService.home(context).showNonRemovableNotification('0', 'Asr', '.023548');
+                             // NotificationService.home(context).showNonRemovableNotification('0', 'Asr');
 
                           },
                           child: Container(

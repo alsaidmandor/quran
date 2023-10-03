@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quran/core/uitls/constants.dart';
 import 'package:quran/features/home/presentation/pages/prayer_time_list.dart';
 import '../../../../core/color/colors.dart';
+import '../../../../core/notification/notification_service.dart';
 import '../../../../core/uitls/assets_manager.dart';
 import '../cubit/home_cubit.dart';
 import '../widgets/background.dart';
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>with WidgetsBindingObserver {
   // void _update() {
   //   setState(() {
   //   });
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? stringTime;
 
+
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
@@ -47,7 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
           int.parse(stringTime!.split(':')[0]),
           int.parse(stringTime!.split(':')[1]),
         );
-        difference = parsedTime.difference(currentTime);
+        difference = parsedTime.difference(currentTime).abs();
+        NotificationService.home(context).scheduleNotification('Asr' , '${difference!.inHours.remainder(60).round()},${difference!.inMinutes.remainder(60)},${difference!.inSeconds.remainder(60)},');
+
+        // NotificationService.home(context)
+            // .showNotification('0', 'Asr' , '${difference!.inHours.remainder(60)},${difference!.inMinutes.remainder(60)},${difference!.inSeconds.remainder(60)},');
       });
     });
   }
@@ -57,15 +63,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // NotificationService.home(context).scheduleNotification();
     startTimer();
+    WidgetsBinding.instance!.addObserver(this);
 
     HomeCubit.get(context).getNextPrayerTime();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      HomeCubit.get(context).getNextPrayerTime();
+    }
+    else if(state == AppLifecycleState.paused )
+      {
+        HomeCubit.get(context).getNextPrayerTime();
+
+      }
+  }
+  @override
   void dispose() {
     _pageController.dispose();
     _timer!.cancel();
+    WidgetsBinding.instance!.addObserver(this);
+
     super.dispose();
   }
 

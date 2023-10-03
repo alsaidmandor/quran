@@ -5,10 +5,17 @@ import 'package:quran/bloc_observer.dart';
 
 import 'app.dart';
 import 'core/notification/notification_service.dart';
+import 'core/uitls/local_database_register.dart';
 
-void main() {
+void main() async {
   Bloc.observer = MyBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
+
+  // init cache
+  await LocalDatabaseRegister.initHive();
+  LocalDatabaseRegister.registerAdapter();
+  await LocalDatabaseRegister.openHiveBox();
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
   ));
@@ -19,5 +26,3 @@ void main() {
   NotificationService().init();
   runApp(const MyApp());
 }
-
-

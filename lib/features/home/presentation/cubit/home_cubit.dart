@@ -1,32 +1,30 @@
-import 'dart:convert';
-
-import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
 import 'package:location/location.dart';
-import 'package:geocode/geocode.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
-import '../../../../core/notification/notification_service.dart';
+
+import '../../../../core/network/network_info.dart';
 import '../../../../core/uitls/constants.dart';
 import '../../../../core/uitls/location.dart';
 import '../../data/models/prayer.dart';
-import '../../data/models/prayer_time.dart';
 import '../../domain/use_cases/get_prayer_time_use_case.dart';
 
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   GetPrayerTimeUseCase getPrayerTimeUseCase;
+  final NetworkInfo networkInfo;
 
-  HomeCubit(this.getPrayerTimeUseCase) : super(HomeInitial());
+  HomeCubit({required this.getPrayerTimeUseCase, required this.networkInfo})
+      : super(HomeInitial());
 
   LocationData? currentLocation;
   String? addressString;
 
   static HomeCubit get(context) => BlocProvider.of(context);
+
+  // final _hiveBox = Hive.box('location');
 
   /*Future<LocationData?> getLocation() async {
     emit(HomeLoadLocation()) ;
@@ -93,7 +91,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   void calculateTimeDifference({required DateTime nextPrayerTime}) {
     DateTime currentTime =
-    DateFormat('hh:mm :ss').format(DateTime.now()) as DateTime;
+        DateFormat('hh:mm :ss').format(DateTime.now()) as DateTime;
     final difference = nextPrayerTime.difference(currentTime);
 
     emit(HomePrayerTime(
@@ -106,46 +104,42 @@ class HomeCubit extends Cubit<HomeState> {
   String? myLocation;
 
   void getLocation(context) async {
-    final service = UsersLocation();
-    emit(HomeLoadCurrentLocation());
-    final locationData = await service.getLocation();
-    if (locationData != null) {
-      try {
-        emit(HomeGetCurrentLocation());
-        NotificationService.home(context)
-            .showNonRemovableNotification('0', 'Asr', '.023548');
+    if (await networkInfo.isConnected) {
+      final service = UsersLocation();
+      emit(HomeLoadCurrentLocation());
+      final locationData = await service.getLocation();
+      if (locationData != null) {
+        try {
+          emit(HomeGetCurrentLocation());
 
-        placeMark = await service.getPlaceMark(locationData: locationData);
-        myLocation =
-        '${placeMark!.subAdministrativeArea},${placeMark!.locality}';
-        print(placeMark?.subLocality);
-      } catch (e) {
-        print(e);
+          // await _hiveBox.put(
+          //   'locationData',
+          //   locationData,
+          // );
+          placeMark = await service.getPlaceMark(locationData: locationData);
+          // await _hiveBox.put(
+          //   'placeMark',
+          //   placeMark,
+          // );
+          // _hiveBox.close();
+          myLocation =
+              '${placeMark!.subAdministrativeArea},${placeMark!.locality}';
+          print(placeMark?.subLocality);
+        } catch (e) {
+          print(e);
+        }
+        getTimePrayer();
       }
-      getTimePrayer();
+    } else {
+      // var locationData = await _hiveBox.get('locationData');
+      // placeMark = await _hiveBox.get('placeMark');
+      // myLocation = '${placeMark!.subAdministrativeArea},${placeMark!.locality}';
     }
   }
 
   List<Data> prayerTime = [];
 
   DateTime? nextPrayerTime;
-
-  // Future<void> getPrayerTime() async {
-  //   String url =
-  //       "https://api.aladhan.com/v1/calendarByCity/${dt.year}/${dt.month}?city=${placeMark?.subAdministrativeArea}&country=${placeMark!.country}&method=5";
-  //
-  //   final response = await http.get(
-  //     Uri.parse(url),
-  //   );
-  //
-  //   if (response.statusCode == 200) {
-  //     prayerTime = PrayerTime.fromJson(json.decode(response.body)).data!;
-  //
-  //     print(json.decode(response.body));
-  //   } else {
-  //     throw Exception("Failed  to Load Post");
-  //   }
-  // }
 
   List<Timings> timings = [];
 
@@ -155,7 +149,8 @@ class HomeCubit extends Cubit<HomeState> {
       year: dt.year.toString(),
       month: dt.month.toString(),
       country: placeMark!.country.toString(),
-      city: placeMark!.subAdministrativeArea.toString(),);
+      city: placeMark!.subAdministrativeArea.toString(),
+    );
     getTime.fold((failure) {
       emit(HomeGetPrayerTimeError());
     }, (time) {
@@ -173,8 +168,8 @@ class HomeCubit extends Cubit<HomeState> {
 
       timings.add(t!);
     }
-    print('${prayerTime.data!.length
-        .toString()}====================================================');
+    print(
+        '${prayerTime.data!.length.toString()}====================================================');
   }
 
   int indexItem = 0;
@@ -192,7 +187,6 @@ class HomeCubit extends Cubit<HomeState> {
   String nextTime = '';
 
   String key = '';
-
 
   setCompareBetweenCurrentTimeAndTimePrayer(String compareTime, String key) {
     DateFormat format = DateFormat('HH:mm');
@@ -223,55 +217,54 @@ class HomeCubit extends Cubit<HomeState> {
   }*/
   }
 
-  int  index =0 ;
+  int index = 0;
   MapEntry<String, dynamic>? nextPrayer;
   int nextPrayerIndex = 0;
-
-
-
 
   getNextPrayerTime() {
     DateTime now = DateTime.now();
     TimeOfDay currentTime = TimeOfDay.fromDateTime(now);
 
-int day = dt.day-1 ;
+    int day = dt.day - 1;
     for (var prayerEntry in timings[day].toJson().entries) {
-        TimeOfDay prayerTime = TimeOfDay(hour: int.parse(prayerEntry.value.toString().substring(0,5).split(':')[0]), minute: int.parse(prayerEntry.value.toString().substring(0,5).split(':')[1]),);
-        if(currentTime.hour < prayerTime.hour)
-          {
-            nextPrayer = prayerEntry ;
-            if(index >5){
-              index=0;
-              nextPrayer = null ;
-              break;
-            }
-            else
-              {
-                nextPrayerIndex = index;
-                print(nextPrayerIndex);
-                break;
+      TimeOfDay prayerTime = TimeOfDay(
+        hour: int.parse(
+            prayerEntry.value.toString().substring(0, 5).split(':')[0]),
+        minute: int.parse(
+            prayerEntry.value.toString().substring(0, 5).split(':')[1]),
+      );
+      DateTime nextTimePrayerTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        prayerTime.hour,
+        prayerTime.minute,
+      );
 
-              }
-           print(prayerEntry.value.toString());
-
-
-          }
-    index++ ;
-
-      if(nextPrayer != null)
-        {
-          break ;
+      if (nextTimePrayerTime.isAfter(now)) {
+        nextPrayer = prayerEntry;
+        if (index > timings[day].toJson().length) {
+          index = 0;
+          nextPrayer = null;
+          break;
+        } else {
+          nextPrayerIndex = index;
+          print(nextPrayerIndex);
+          break;
         }
-    }
+        print(prayerEntry.value.toString());
+      }
 
-    if(nextPrayer == null)
-      {
-        nextPrayer = timings[dt.day].toJson().entries.first;
-        nextPrayerIndex = 0 ;
+      index++;
+
+      if (nextPrayer != null) {
+        break;
       }
     }
 
+    if (nextPrayer == null) {
+      nextPrayer = timings[dt.day].toJson().entries.first;
+      nextPrayerIndex = 0;
+    }
+  }
 }
-
-
-
